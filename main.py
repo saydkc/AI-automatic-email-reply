@@ -5,6 +5,21 @@ import time
 import os
 from email.message import EmailMessage
 
+  # /// web service portel ///
+from flask import Flask
+import threading
+import os
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Email bot running"
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
 EMAIL = os.getenv("EMAIL")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
 
@@ -92,6 +107,8 @@ def check_emails():
 
 print("Email advertisement bot started")
 
+
+threading.Thread(target=run_web).start()
 while True:
     try:
         check_emails()
