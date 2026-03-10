@@ -77,11 +77,12 @@ AI Automation Services
 
 
 def check_emails():
-
+    print("Checking inbox...")
     mail = imaplib.IMAP4_SSL("imap.gmail.com")
     mail.login(EMAIL, APP_PASSWORD)
 
     mail.select("inbox")
+    print("New unread emails found!")
 
     status, messages = mail.search(None, '(UNSEEN)')
     email_ids = messages[0].split()
