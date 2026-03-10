@@ -1,14 +1,16 @@
+
 import imaplib
 import smtplib
 import email
 import time
 import os
-from email.message import EmailMessage
-
-  # /// web service portel ///
+from email.mime.text import MIMEText
+from email.utils import parseaddr
 from flask import Flask
-import threading
-import os
+
+# Gmail login
+EMAIL = "yourgmail@gmail.com"
+PASSWORD = "your_app_password"
 
 app = Flask(__name__)
 
@@ -16,104 +18,91 @@ app = Flask(__name__)
 def home():
     return "Email bot running"
 
-def run_web():
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
-
-EMAIL = os.getenv("EMAIL")
-APP_PASSWORD = os.getenv("APP_PASSWORD")
-
-
-def is_bot(sender):
-    bot_keywords = ["noreply", "no-reply", "bot", "mailer", "notification", "google"]
-
-    sender = sender.lower()
-
-    for word in bot_keywords:
-        if word in sender:
-            return True
-
-    return False
-
-
-def send_advertisement(to_email):
-
-    ad_message = """
-Hello,
-
-My name is Ali and I run an AI Automation service that helps businesses save time and reduce manual work.
-
-Many companies spend a lot of time on repetitive tasks like replying to emails, handling customer questions, data entry, and marketing messages. With AI automation, these tasks can be done automatically.
-
-Our AI solutions can help your business:
-• Automatically reply to customer messages
-• Send marketing emails to potential customers
-• Organize and process business data
-• Reduce employee workload
-• Improve efficiency and productivity
-
-If you are interested, I would be happy to show you how AI automation can help your business grow.
-
-Please reply to this email if you would like to learn more.
-
-Best regards,
-ali
-AI Automation Services
-
-"""
-
-    msg = EmailMessage()
-    msg["From"] = EMAIL
-    msg["To"] = to_email
-    msg["Subject"] = "Save Time and Money with AI Automation"
-    msg.set_content(ad_message)
-
-    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-    server.login(EMAIL, APP_PASSWORD)
-    server.send_message(msg)
-    server.quit()
-
-    print("Advertisement sent to:", to_email)
-
 
 def check_emails():
-    print("Checking inbox...")
-    mail = imaplib.IMAP4_SSL("imap.gmail.com")
-    mail.login(EMAIL, APP_PASSWORD)
-
-    mail.select("inbox")
-    print("New unread emails found!")
-
-    status, messages = mail.search(None, '(UNSEEN)')
-    email_ids = messages[0].split()
-
-    for e_id in email_ids:
-
-        status, msg_data = mail.fetch(e_id, "(RFC822)")
-        raw_email = msg_data[0][1]
-
-        msg = email.message_from_bytes(raw_email)
-
-        sender = msg["From"]
-
-        print("New email from:", sender)
-
-        if not is_bot(sender):
-            send_advertisement(sender)
-        else:
-            print("Skipped bot email")
-
-    mail.logout()
-
-
-print("Email advertisement bot started")
-
-
-threading.Thread(target=run_web).start()
-while True:
     try:
-        check_emails()
+        print("Checking inbox...")
+
+        # Connect to Gmail IMAP
+        mail = imaplib.IMAP4_SSL("imap.gmail.com")
+        mail.login(EMAIL, PASSWORD)
+        mail.select("inbox")
+
+        status, messages = mail.search(None, '(UNSEEN)')
+        email_ids = messages[0].split()
+
+        print("Unread emails:", len(email_ids))
+
+        for e_id in email_ids:
+            status, msg_data = mail.fetch(e_id, "(RFC822)")
+            raw_email = msg_data[0][1]
+
+            msg = email.message_from_bytes(raw_email)
+
+            sender = parseaddr(msg["From"])[1]
+            subject = msg["Subject"]
+
+            print("New email from:", sender)
+            print("Subject:", subject)
+
+            send_reply(sender)
+
+        mail.logout()
+
     except Exception as e:
         print("Error:", e)
 
-    time.sleep(113)
+
+def send_reply(to_email):
+    try:
+        print("Sending reply to:", to_email)
+
+        msg = MIMEText(
+            """Hello,
+    
+            Thank you for contacting us.
+    
+            We appreciate your interest in our services. Our team specializes in AI automation, email marketing tools, and digital solutions that help businesses grow faster.
+    
+            What we offer:
+            • AI automation tools
+            • Email marketing systems
+            • Website and software development
+            • Business growth strategies
+    
+            If you would like to learn more, feel free to reply to this email or visit our website.
+    
+            Best regards,
+            AI Automation Team
+            """
+        )
+
+
+        msg["Subject"] = "Save Time and Money with AI Automation"
+        msg["From"] = EMAIL
+        msg["To"] = to_email
+
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+        server.login(EMAIL, PASSWORD)
+        server.sendmail(EMAIL, to_email, msg.as_string())
+        server.quit()
+
+        print("Reply sent successfully!")
+
+    except Exception as e:
+        print("Send error:", e)
+
+
+def email_loop():
+    while True:
+        check_emails()
+        time.sleep(120)  # check every 2 minutes
+
+
+import threading
+threading.Thread(target=email_loop).start()
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
