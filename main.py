@@ -11,8 +11,9 @@ from flask import Flask
 # Gmail login
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
+mail = imaplib.IMAP4_SSL("imap.gmail.com")
 mail.login(EMAIL, PASSWORD)
-print("Login successful")
+mail.select("inbox")
 
 app = Flask(__name__)
 
