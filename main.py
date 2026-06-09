@@ -32,13 +32,14 @@ def check_emails():
         try:
             mail = imaplib.IMAP4_SSL("imap.gmail.com")
             print("Step 2")
+
+            mail.login(EMAIL, PASSWORD)
+            print("Step 3")
+
+            print("Login successful")
+
         except Exception as e:
             print("IMAP ERROR:", e)
-
-        print("Step 3")
-
-        print("Login successful")
-
         mail.select("inbox")
 
         status, messages = mail.search(None, '(UNSEEN)')
