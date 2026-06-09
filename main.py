@@ -26,20 +26,25 @@ def check_emails():
         print("Checking inbox...")
         print("I am inside check_emails")
 
+
         # Connect to Gmail IMAP
+
         print("Step 1")
 
         try:
-            mail = imaplib.IMAP4_SSL("imap.gmail.com")
-            print("Step 2")
+            print("Connecting to Gmail...")
+            mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
 
+            print("Connected!")
+
+            print("Trying login...")
             mail.login(EMAIL, PASSWORD)
-            print("Step 3")
 
-            print("Login successful")
+            print("LOGIN SUCCESSFUL")
 
         except Exception as e:
-            print("IMAP ERROR:", e)
+            print("FULL ERROR:")
+            print(repr(e))
         mail.select("inbox")
 
         status, messages = mail.search(None, '(UNSEEN)')
