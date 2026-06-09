@@ -11,6 +11,8 @@ from flask import Flask
 # Gmail login
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
+print("EMAIL =", EMAIL)
+print("PASSWORD EXISTS =", PASSWORD is not None)
 
 app = Flask(__name__)
 
@@ -26,7 +28,11 @@ def check_emails():
 
         # Connect to Gmail IMAP
         mail = imaplib.IMAP4_SSL("imap.gmail.com")
-        mail.login(EMAIL, PASSWORD)
+        try:
+            mail.login(EMAIL, PASSWORD)
+            print("Login successful")
+        except Exception as e:
+            print("LOGIN ERROR:", e)
 
         print("Login successful")
 
