@@ -33,7 +33,11 @@ def check_emails():
 
         print("Step 2")
 
-        mail.login(EMAIL, PASSWORD)
+        try:
+            mail.login(EMAIL, PASSWORD)
+            print("Login successful")
+        except Exception as e:
+            print("LOGIN ERROR:", e)
 
         print("Step 3")
 
