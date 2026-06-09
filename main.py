@@ -9,8 +9,10 @@ from email.utils import parseaddr
 from flask import Flask
 
 # Gmail login
-EMAIL = "yourgmail@gmail.com"
-PASSWORD = "your_app_password"
+EMAIL = os.getenv("EMAIL")
+PASSWORD = os.getenv("PASSWORD")
+mail.login(EMAIL, PASSWORD)
+print("Login successful")
 
 app = Flask(__name__)
 
