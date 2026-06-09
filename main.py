@@ -20,41 +20,22 @@ app = Flask(__name__)
 def home():
     return "Email bot running"
 
-
 def check_emails():
     try:
         print("Checking inbox...")
-        print("I am inside check_emails")
 
+        mail = imaplib.IMAP4_SSL("imap.gmail.com")
+        print("Connected to Gmail")
 
-        # Connect to Gmail IMAP
+        mail.login(EMAIL, PASSWORD)
+        print("Login successful")
 
-    
-            import socket
-
-            print("Connecting to Gmail...")
-
-            mail = imaplib.IMAP4_SSL("imap.gmail.com")
-
-            print("Connected!")
-
-            print("Trying login...")
-
-            mail.login(EMAIL, PASSWORD)
-
-            print("LOGIN SUCCESSFUL")
-
-
-        except Exception as e:
-            print("FULL ERROR:")
-            print(repr(e))
         mail.select("inbox")
 
         status, messages = mail.search(None, '(UNSEEN)')
         email_ids = messages[0].split()
 
         print("Unread emails:", len(email_ids))
-        print("Email IDs:", email_ids)
 
         for e_id in email_ids:
             status, msg_data = mail.fetch(e_id, "(RFC822)")
@@ -63,17 +44,15 @@ def check_emails():
             msg = email.message_from_bytes(raw_email)
 
             sender = parseaddr(msg["From"])[1]
-            subject = msg["Subject"]
 
             print("New email from:", sender)
-            print("Subject:", subject)
 
             send_reply(sender)
 
         mail.logout()
 
     except Exception as e:
-        print("Error:", e)
+        print("ERROR:", e)
 
 
 def send_reply(to_email):
