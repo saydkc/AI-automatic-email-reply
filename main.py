@@ -29,10 +29,7 @@ def check_emails():
 
         # Connect to Gmail IMAP
 
-        print("Step 1")
-
-        try:
-            print("Connecting to Gmail...")
+    
             import socket
 
             print("Connecting to Gmail...")
