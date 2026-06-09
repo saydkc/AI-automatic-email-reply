@@ -26,12 +26,16 @@ def check_emails():
         # Connect to Gmail IMAP
         mail = imaplib.IMAP4_SSL("imap.gmail.com")
         mail.login(EMAIL, PASSWORD)
+
+        print("Login successful")
+
         mail.select("inbox")
 
         status, messages = mail.search(None, '(UNSEEN)')
         email_ids = messages[0].split()
 
         print("Unread emails:", len(email_ids))
+        print("Email IDs:", email_ids)
 
         for e_id in email_ids:
             status, msg_data = mail.fetch(e_id, "(RFC822)")
