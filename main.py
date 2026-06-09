@@ -22,6 +22,7 @@ def home():
 def check_emails():
     try:
         print("Checking inbox...")
+        print("I am inside check_emails")
 
         # Connect to Gmail IMAP
         mail = imaplib.IMAP4_SSL("imap.gmail.com")
