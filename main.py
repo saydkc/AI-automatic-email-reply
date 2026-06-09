@@ -23,23 +23,23 @@ def home():
     return "Email bot running"
 
 def check_emails():
-        try:
-            print("Checking inbox...")
+    try:
+        print("Checking inbox...")
 
-            mail = imaplib.IMAP4_SSL("imap.gmail.com")
-            print("Connected to Gmail server")  # <-- Add this
+        mail = imaplib.IMAP4_SSL("imap.gmail.com")
+        print("Connected to Gmail server")
 
-            mail.login(EMAIL, PASSWORD)
-            print("Logged in successfully")  # <-- Add this
+        mail.login(EMAIL, PASSWORD)
+        print("Logged in successfully")
 
-            mail.select("inbox")
-            print("Inbox selected")  # <-- Add this
+        mail.select("inbox")
+        print("Inbox selected")
 
-            status, messages = mail.search(None, '(UNSEEN)')
-            print("Search status:", status)  # <-- Add this
-            print("Messages:", messages)  # <-- Add this
+        status, messages = mail.search(None, '(UNSEEN)')
+        print("Search status:", status)
+        print("Messages:", messages)
+
         email_ids = messages[0].split()
-
         print("Unread emails:", len(email_ids))
 
         for e_id in email_ids:
@@ -58,7 +58,6 @@ def check_emails():
 
     except Exception as e:
         print("ERROR:", repr(e))
-        traceback.print_exc()
 
 
 def send_reply(to_email):
