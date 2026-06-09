@@ -35,20 +35,18 @@ def check_emails():
             print("Connecting to Gmail...")
             import socket
 
-            print("Testing Gmail connection...")
+            print("Connecting to Gmail...")
 
-            try:
-                socket.create_connection(("imap.gmail.com", 993), timeout=10)
-                print("Gmail reachable")
-            except Exception as e:
-                print("SOCKET ERROR:", repr(e))
+            mail = imaplib.IMAP4_SSL("imap.gmail.com")
 
             print("Connected!")
 
             print("Trying login...")
+
             mail.login(EMAIL, PASSWORD)
 
             print("LOGIN SUCCESSFUL")
+
 
         except Exception as e:
             print("FULL ERROR:")
