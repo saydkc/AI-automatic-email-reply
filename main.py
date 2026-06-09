@@ -29,15 +29,11 @@ def check_emails():
         # Connect to Gmail IMAP
         print("Step 1")
 
-        mail = imaplib.IMAP4_SSL("imap.gmail.com")
-
-        print("Step 2")
-
         try:
-            mail.login(EMAIL, PASSWORD)
-            print("Login successful")
+            mail = imaplib.IMAP4_SSL("imap.gmail.com")
+            print("Step 2")
         except Exception as e:
-            print("LOGIN ERROR:", e)
+            print("IMAP ERROR:", e)
 
         print("Step 3")
 
