@@ -7,6 +7,8 @@ import os
 from email.mime.text import MIMEText
 from email.utils import parseaddr
 from flask import Flask
+import traceback
+
 
 # Gmail login
 EMAIL = os.getenv("EMAIL")
@@ -21,18 +23,21 @@ def home():
     return "Email bot running"
 
 def check_emails():
-    try:
-        print("Checking inbox...")
+        try:
+            print("Checking inbox...")
 
-        mail = imaplib.IMAP4_SSL("imap.gmail.com")
-        print("Connected to Gmail")
+            mail = imaplib.IMAP4_SSL("imap.gmail.com")
+            print("Connected to Gmail server")  # <-- Add this
 
-        mail.login(EMAIL, PASSWORD)
-        print("Login successful")
+            mail.login(EMAIL, PASSWORD)
+            print("Logged in successfully")  # <-- Add this
 
-        mail.select("inbox")
+            mail.select("inbox")
+            print("Inbox selected")  # <-- Add this
 
-        status, messages = mail.search(None, '(UNSEEN)')
+            status, messages = mail.search(None, '(UNSEEN)')
+            print("Search status:", status)  # <-- Add this
+            print("Messages:", messages)  # <-- Add this
         email_ids = messages[0].split()
 
         print("Unread emails:", len(email_ids))
@@ -52,7 +57,8 @@ def check_emails():
         mail.logout()
 
     except Exception as e:
-        print("ERROR:", e)
+        print("ERROR:", repr(e))
+        traceback.print_exc()
 
 
 def send_reply(to_email):
